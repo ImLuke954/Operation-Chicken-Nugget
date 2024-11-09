@@ -65,9 +65,9 @@ for day in range(4):
             print(json.dumps(response.json(), indent=4))
             exit()
     #set options
-    options = [{'itemId':itemID,'duration':'P1M','planCode':'bandwidth-100-included-ks','pricingMode':'default','quantity':1},
-            {'itemId':itemID,'duration':'P1M','planCode':'noraid-1x1000sa-sk010','pricingMode':'default','quantity':1},
-            {'itemId':itemID,'duration':'P1M','planCode':'ram-4g-sk010','pricingMode':'default','quantity':1}
+    options = [{'itemId':itemID,'duration':'P1M','planCode':'bandwidth-100-24sk','pricingMode':'default','quantity':1},
+            {'itemId':itemID,'duration':'P1M','planCode':'softraid-1x480ssd-24ska01','pricingMode':'default','quantity':1},
+            {'itemId':itemID,'duration':'P1M','planCode':'ram-64g-noecc-2133-24ska01','pricingMode':'default','quantity':1}
     ]
     for option in options:
         response = requests.post(f"https://{config['endpointAPI']}/1.0/order/cart/{cart.get('cartId')}/eco/options", headers=headers, data=json.dumps(option))
@@ -83,7 +83,7 @@ for day in range(4):
         now = datetime.now()
         print(f'Run {check+1} {now.strftime("%H:%M:%S")}')
         #wait for stock
-        response = requests.get('https://us.ovh.com/engine/apiv6/dedicated/server/datacenter/availabilities?excludeDatacenters=false&planCode=22sk010&server=22sk010')
+        response = requests.get('https://ca.ovh.com/engine/apiv6/dedicated/server/datacenter/availabilities?excludeDatacenters=false&planCode=24ska01&server=24ska01')
         if response.status_code == 200:
             stock = response.json()
             score = 0
