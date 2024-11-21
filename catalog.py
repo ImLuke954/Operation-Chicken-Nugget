@@ -1,7 +1,7 @@
 import requests
 
 endpoint = "ca.api.ovh.com"
-response = requests.get(f'https://{endpoint}/1.0/order/catalog/public/eco?ovhSubsidiary=WE')
+response = requests.get(f'https://{endpoint}/1.0/order/catalog/public/eco?ovhSubsidiary=IN')
 catalog = response.json()
 catalogSorted = {}
 for plan in catalog['plans']:
