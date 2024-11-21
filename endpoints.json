@@ -1,6 +1,6 @@
 {
    "ca.api.ovh.com": {
-      "catalog":"https://ca.api.ovh.com/1.0/order/catalog/public/eco?ovhSubsidiary=CA",
+      "catalog":"https://ca.api.ovh.com/1.0/order/catalog/public/eco?ovhSubsidiary=IN",
       "availability":"https://ca.api.ovh.com/v1/dedicated/server/datacenter/availabilities",
       "endpoint":"ovh-ca"
    },
