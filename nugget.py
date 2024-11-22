@@ -7,7 +7,6 @@ with open('endpoints.json') as f: endpoints = json.load(f)
 path = os.path.dirname(os.path.realpath(__file__))
 
 if not "autoPay" in config: exit("autoPay missing in config.")
-if not "switchRegion" in config: exit("switchRegion missing in config.")
 if not "anyDatacenter" in config: exit("anyDatacenter missing in config.")
 
 if len(sys.argv) == 1:
@@ -48,9 +47,9 @@ headers = {'Accept': 'application/json','X-Ovh-Application':config['application_
 'Content-Type':'application/json;charset=utf-8','Host':selectedEndpoint['endpointAPI']}
 
 def datacenterToRegion(availableDataCenter):
-    if availableDataCenter == "bhs": 
+    if "bhs" in availableDataCenter: 
         return "canada"
-    elif availableDataCenter == "vin" or availableDataCenter == "hil":
+    elif "vin" in availableDataCenter or "hil" in availableDataCenter:
         return "northamerica"
     else:
         return "europe"
@@ -89,20 +88,18 @@ if len(sys.argv) == 1:
     print("Loading availability...")
     availabilityRaw = call(f'{selectedEndpoint["availability"]}?excludeDatacenters=false&planCode={planConfig["planCode"]}&server={planConfig["planCode"]}')
     availability = availabilityRaw.json()
+    print("Available in the following datacenters")
     if not availability:
-        print(f"Failed to fetch availability, please enter desired datacenter manualy.")
-        dc = input()
+        print(f"Failed to fetch availability, please enter the desired datacenters manualy.")
+        planConfig['datacenter'] = input()
     else:
         for index, datacenter in enumerate(availability[0]['datacenters']):
-            print(index, datacenter['datacenter'])
-        selected = input()
-        for index, datacenter in enumerate(availability[0]['datacenters']):
-            if int(selected) == index: 
-                dc = datacenter['datacenter']
-                break
+            print(datacenter['datacenter'])
+        print("Please enter the desired datacenter e.g waw you can also enter multiple like fra,gra,sbg")
+        print("Keep in mind, they have to be in the same region.")
+        planConfig['datacenter'] = input()
 
-    planConfig['region'] = datacenterToRegion(dc)
-    planConfig['datacenter'] = dc
+    planConfig['region'] = datacenterToRegion(planConfig['datacenter'])
     planConfig['endpoint'] = selectedEndpoint['endpointAPI']
 print(f"Your selected config")
 print(planConfig)
@@ -180,7 +177,7 @@ while True:
                     availableDataCenter = datacenter['datacenter'] 
                     score = score +1
                     break
-                elif datacenter['availability'] != "unavailable" and datacenter['datacenter'] == config['dedicated_datacenter']:
+                elif datacenter['availability'] != "unavailable" and datacenter['datacenter'] in planConfig['datacenter']:
                     availableDataCenter = datacenter['datacenter'] 
                     score = score +1
                     break
@@ -209,7 +206,7 @@ while True:
                     print(json.dumps(response.json(), indent=4))
                     retry += 1
                     if retry > 15: exit()
-                    if retry % 4 == 0 and config['switchRegion']:
+                    if retry % 4 == 0 and config['anyDatacenter']:
                         print(f"Switching Region to {datacenterToRegion(availableDataCenter)} and datacenter to {availableDataCenter}") 
                         planConfig['datacenter'] = availableDataCenter
                         planConfig['region'] = datacenterToRegion(availableDataCenter)
